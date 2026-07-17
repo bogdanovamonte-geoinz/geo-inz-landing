@@ -1,6 +1,6 @@
 # GeoInženiring landing page
 
-Redesign based on the 2026 digital vision: organic minimalism, real fieldwork visual, thumb-zone mobile actions, an interactive report explainer, scope calculator and coverage map.
+Light, conversion-focused landing page for private home builders and residential architects. The visual system combines GeoInženiring's official green brand, real fieldwork photography and the technical annotation language from the Career Foundations presentation.
 
 ## Run locally
 
@@ -16,6 +16,7 @@ The site is dependency-free and can be deployed as a static project on Vercel. T
 
 ## Content notes
 
+- `assets/logo-geoinzeniring.png` is the official logo downloaded from geo-inz.si.
 - Replace `assets/hero-fieldwork.webp` with an approved original company photo when one is available.
-- Confirm telephone and WhatsApp numbers before production launch.
-- The calculator estimates the likely research scope, not a final price.
+- Confirm the displayed telephone number before production launch.
+- The contact form opens a prepared email and does not store data.
