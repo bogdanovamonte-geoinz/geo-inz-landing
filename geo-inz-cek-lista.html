@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoInženiring – pomočnik za povpraševanje</title>
+<style>
+  :root{
+    --bg:#F6F1E7;
+    --card:#FFFFFF;
+    --ink:#2B2B28;
+    --muted:#726E64;
+    --primary:#2F5D45;
+    --primary-dark:#22432F;
+    --primary-light:#E7F0EA;
+    --accent:#C1712D;
+    --success:#2F7A4F;
+    --success-bg:#E7F3EA;
+    --warn:#A5730F;
+    --warn-bg:#FBF0DD;
+    --danger:#B23A2E;
+    --danger-bg:#FBEAE7;
+    --border:#E7E0D2;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    padding:24px 12px;
+    min-height:100vh;
+  }
+  .wrap{
+    max-width:620px;
+    margin:0 auto;
+  }
+  .widget{
+    background:var(--card);
+    border-radius:20px;
+    box-shadow:0 8px 30px rgba(43,43,40,0.08);
+    border:1px solid var(--border);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .widget-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 18px;
+    background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+    color:#fff;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-badge{
+    width:38px;height:38px;border-radius:12px;
+    background:rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;
+    flex-shrink:0;
+  }
+  .brand-text b{display:block;font-size:15px;line-height:1.2;}
+  .brand-text span{display:block;font-size:12px;opacity:0.85;}
+  .lang-toggle{
+    display:flex;
+    background:rgba(255,255,255,0.15);
+    border-radius:999px;
+    padding:3px;
+    flex-shrink:0;
+  }
+  .lang-toggle button{
+    border:none;background:transparent;color:#fff;
+    padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+    cursor:pointer;opacity:0.7;
+  }
+  .lang-toggle button.active{background:#fff;color:var(--primary-dark);opacity:1;}
+
+  .progress-bar{
+    height:4px;background:var(--border);
+  }
+  .progress-fill{
+    height:100%;background:var(--accent);
+    transition:width .3s ease;
+  }
+
+  .transcript{
+    padding:20px 18px 8px 18px;
+    max-height:56vh;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    scroll-behavior:smooth;
+  }
+  .msg{max-width:88%;}
+  .msg.bot{align-self:flex-start;}
+  .msg.user{align-self:flex-end;}
+  .bubble{
+    padding:12px 14px;
+    border-radius:16px;
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .msg.bot .bubble{
+    background:#FAF7F0;
+    border:1px solid var(--border);
+    border-bottom-left-radius:4px;
+    color:var(--ink);
+  }
+  .msg.user .bubble{
+    background:var(--primary);
+    color:#fff;
+    border-bottom-right-radius:4px;
+    font-weight:600;
+  }
+  .msg.user.ans-no .bubble{background:var(--danger);}
+  .msg.user.ans-unsure .bubble{background:var(--warn);}
+  .msg.user.ans-yes .bubble{background:var(--success);}
+
+  .q-label{font-weight:700;margin-bottom:2px;}
+  .hint-toggle{
+    display:inline-block;margin-top:6px;
+    font-size:12.5px;color:var(--primary);
+    cursor:pointer;text-decoration:underline;
+    background:none;border:none;padding:0;font-family:inherit;
+  }
+  .hint-box{
+    margin-top:8px;
+    padding:10px 12px;
+    background:var(--primary-light);
+    border-radius:10px;
+    font-size:13px;
+    color:var(--primary-dark);
+    line-height:1.5;
+  }
+  .hint-box b{display:block;margin-bottom:2px;}
+
+  .controls{
+    border-top:1px solid var(--border);
+    padding:16px 18px 20px 18px;
+    background:#FEFDFB;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:11px 18px;
+    border-radius:12px;
+    border:none;
+    font-size:14.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .08s ease, opacity .15s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--primary);color:#fff;width:100%;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-primary:disabled{opacity:0.45;cursor:not-allowed;}
+  .btn-secondary{background:var(--primary-light);color:var(--primary-dark);width:100%;}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+
+  .answer-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .answer-row .btn{flex:1 1 auto;min-width:110px;}
+  .btn-yes{background:var(--success-bg);color:var(--success);}
+  .btn-no{background:var(--danger-bg);color:var(--danger);}
+  .btn-unsure{background:var(--warn-bg);color:var(--warn);}
+  .btn-yes:hover{background:var(--success);color:#fff;}
+  .btn-no:hover{background:var(--danger);color:#fff;}
+  .btn-unsure:hover{background:var(--warn);color:#fff;}
+
+  .service-grid{display:flex;flex-direction:column;gap:10px;}
+  .service-card{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:13px 14px;
+    border:1.5px solid var(--border);
+    border-radius:14px;
+    cursor:pointer;
+    background:#fff;
+    text-align:left;
+  }
+  .service-card:hover{border-color:var(--primary);background:var(--primary-light);}
+  .service-icon{font-size:22px;flex-shrink:0;line-height:1;margin-top:2px;}
+  .service-title{font-weight:700;font-size:14.5px;margin-bottom:2px;}
+  .service-sub{font-size:12.5px;color:var(--muted);line-height:1.4;}
+
+  .step-label{font-size:12px;color:var(--muted);margin-bottom:10px;text-align:center;}
+
+  .summary-list{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .summary-item{
+    padding:10px 12px;border-radius:10px;font-size:13.5px;line-height:1.5;
+  }
+  .summary-item.ok{background:var(--success-bg);color:var(--success);}
+  .summary-item.missing{background:var(--danger-bg);color:var(--danger);}
+  .summary-item.unsure{background:var(--warn-bg);color:var(--warn);}
+  .summary-item .si-title{font-weight:700;color:var(--ink);}
+  .summary-item .si-note{margin-top:4px;font-size:12.5px;color:var(--muted);}
+
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  .field input,.field textarea{
+    width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
+    font-size:14.5px;font-family:inherit;color:var(--ink);background:#fff;
+  }
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--primary);}
+  .field textarea{resize:vertical;min-height:60px;}
+
+  .footer-contact{
+    margin-top:14px;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.7;
+  }
+  .footer-contact a{color:var(--primary-dark);text-decoration:none;font-weight:600;}
+
+  .row-2{display:flex;gap:10px;}
+  .row-2>*{flex:1;}
+
+  @media (max-width:480px){
+    .transcript{max-height:50vh;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="widget">
+    <div class="widget-header">
+      <div class="brand">
+        <div class="brand-badge">🌍</div>
+        <div class="brand-text">
+          <b>GeoInženiring d.o.o.</b>
+          <span id="tagline"></span>
+        </div>
+      </div>
+      <div class="lang-toggle">
+        <button id="lang-sl" onclick="setLang('sl')">SL</button>
+        <button id="lang-ru" onclick="setLang('ru')">RU</button>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="transcript" id="transcript"></div>
+    <div class="controls" id="controls"></div>
+  </div>
+  <div class="footer-contact" id="footerContact"></div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+
+const TEXT = {
+  tagline: {sl:"Pomočnik za pripravo povpraševanja", ru:"Помощник в подготовке запроса"},
+  greeting: {
+    sl:"Zdravo! 👋 Sem tukaj, da vam pomagam ugotoviti, kaj vse potrebujemo za pripravo strokovne ponudbe zate. V paru minutah preverimo, katere podatke in dokumente že imate – tako bo naša ponudba hitrejša in natančnejša.",
+    ru:"Здравствуйте! 👋 Я помогу вам сориентироваться, что нужно для подготовки грамотного предложения. За пару минут проверим, какие данные и документы у вас уже есть — так наше предложение будет быстрее и точнее."
+  },
+  startButton: {sl:"Začnimo", ru:"Начнём"},
+  askService: {sl:"Za začetek – katera storitev vas zanima?", ru:"Для начала — какая услуга вас интересует?"},
+  questionStep: {sl:"Vprašanje {n} od {total}", ru:"Вопрос {n} из {total}"},
+  hintToggle: {sl:"ⓘ Zakaj to potrebujemo in kje to dobim?", ru:"ⓘ Зачем это нужно и где это взять?"},
+  whyLabel: {sl:"Zakaj potrebujemo", ru:"Зачем это нужно"},
+  whereLabel: {sl:"Kje to dobite", ru:"Где это взять"},
+  ansYes: {sl:"Da, imam ✅", ru:"Да, есть ✅"},
+  ansNo: {sl:"Nimam še ❌", ru:"Пока нет ❌"},
+  ansUnsure: {sl:"Nisem prepričan/a ❔", ru:"Не уверен(а) ❔"},
+  successTitle: {sl:"Odlično, imate vse! 🎉", ru:"Отлично, у вас есть всё! 🎉"},
+  successBody: {
+    sl:"Zbrali ste vse podatke, ki jih za to storitev potrebujemo. Pošljite nam povpraševanje – na vaš e-naslov odgovorimo s konkretno ponudbo v roku 2 delovnih dni.",
+    ru:"Вы собрали все данные, которые нужны нам для этой услуги. Отправьте запрос — мы ответим konkretным предложением на вашу почту в течение 2 рабочих дней."
+  },
+  partialTitle: {sl:"Skoraj tam – manjka le še nekaj", ru:"Почти всё готово — не хватает совсем немного"},
+  partialBody: {
+    sl:"Spodaj je pregled, kaj še potrebujete in kje to dobite. Dokumente lahko zberete in se vrnete pozneje, ali pa nam že zdaj pošljete povpraševanje s tem, kar imate – preostalo uskladimo skupaj.",
+    ru:"Ниже — то, чего пока не хватает, и где это получить. Можно сначала собрать документы и вернуться позже, либо уже сейчас отправить нам запрос с тем, что уже есть — остальное согласуем вместе."
+  },
+  sendInquiry: {sl:"Pošlji povpraševanje", ru:"Отправить запрос"},
+  restart: {sl:"Nova poizvedba", ru:"Начать заново"},
+  contactTitle: {sl:"Odlično – kam vam pošljemo ponudbo?", ru:"Отлично — куда отправить предложение?"},
+  nameLabel: {sl:"Ime in priimek", ru:"Имя и фамилия"},
+  emailLabel: {sl:"E-pošta", ru:"Email"},
+  phoneLabel: {sl:"Telefon (neobvezno)", ru:"Телефон (необязательно)"},
+  messageLabel: {sl:"Sporočilo (neobvezno)", ru:"Сообщение (необязательно)"},
+  messagePlaceholder: {sl:"Kaj bi še radi dodali?", ru:"Что хотите добавить?"},
+  submitButton: {sl:"Pošlji povpraševanje po e-pošti", ru:"Отправить запрос по почте"},
+  privacyNote: {
+    sl:"Vaši podatki bodo uporabljeni izključno za pripravo ponudbe.",
+    ru:"Ваши данные будут использованы исключительно для подготовки предложения."
+  },
+  doneTitle: {sl:"Hvala! ✉️", ru:"Спасибо! ✉️"},
+  doneBody: {
+    sl:"Vaš e-poštni odjemalec se je (ali se bo) odprl s pripravljenim sporočilom na dir@geo-inz.si. Če se okno ni odprlo, uporabite spodnji gumb, da povzetek kopirate in nam ga pošljete ročno.",
+    ru:"Ваш почтовый клиент открылся (или вот-вот откроется) с готовым письмом на dir@geo-inz.si. Если окно не открылось — используйте кнопку ниже, чтобы скопировать сводку и отправить её вручную."
+  },
+  copySummary: {sl:"Kopiraj povzetek", ru:"Скопировать сводку"},
+  copied: {sl:"Kopirano ✓", ru:"Скопировано ✓"},
+  fillRequired: {sl:"Prosimo, izpolnite ime in veljaven e-naslov.", ru:"Пожалуйста, укажите имя и корректный email."},
+  footerContact: {
+    sl:'📞 <a href="tel:+38612345600">+386 1 23 45 600</a> &nbsp;·&nbsp; ✉️ <a href="mailto:dir@geo-inz.si">dir@geo-inz.si</a> &nbsp;·&nbsp; pon–pet 8:00–16:00',
+    ru:'📞 <a href="tel:+38612345600">+386 1 23 45 600</a> &nbsp;·&nbsp; ✉️ <a href="mailto:dir@geo-inz.si">dir@geo-inz.si</a> &nbsp;·&nbsp; пн–пт 8:00–16:00'
+  }
+};
+
+const COMMON_DOCS = [
+  {
+    id:"parcel_info",
+    label:{sl:"Številka parcele in katastrska občina (KO)", ru:"Номер участка и кадастровая община (KO)"},
+    why:{sl:"Brez natančne lokacije ne moremo oceniti terena niti pripraviti ponudbe.", ru:"Без точного расположения мы не сможем оценить участок и подготовить предложение."},
+    where:{sl:"Najdete jo na zemljiškoknjižnem izpisku, v prodajni pogodbi ali brezplačno na portalu e-prostor.gov.si oz. PISO (po naslovu ali s klikom na zemljevidu).", ru:"Найдёте в выписке из земельной книги, в договоре купли-продажи, либо бесплатно на портале e-prostor.gov.si или PISO (по адресу или кликом на карте)."}
+  },
+  {
+    id:"ownership",
+    label:{sl:"Dokazilo o lastništvu ali soglasje lastnika zemljišča", ru:"Подтверждение права собственности или согласие владельца участка"},
+    why:{sl:"Za vstop na parcelo z opremo (vrtanje, sondiranje) potrebujemo potrditev, da imate pravico razpolaganja z zemljiščem.", ru:"Чтобы попасть на участок с техникой (бурение, шурфы), нам нужно подтверждение, что вы вправе распоряжаться участком."},
+    where:{sl:"Zemljiškoknjižni izpisek dobite brezplačno na portalu e-sodstvo (Vpogled v zemljiško knjigo), lahko pa priložite tudi prodajno pogodbo.", ru:"Выписку из земельной книги можно получить бесплатно на портале e-sodstvo (Vpogled v zemljiško knjigo), либо приложите договор купли-продажи."}
+  }
+];
+
+const SERVICES = [
+  {
+    id:"hisa", icon:"🏠",
+    title:{sl:"Gradim hišo ali gospodarsko poslopje", ru:"Строю дом или хозпостройку"},
+    subtitle:{sl:"Geološko-geomehansko poročilo za gradbeno dovoljenje", ru:"Геолого-геомеханическое заключение для разрешения на строительство"},
+    intro:{
+      sl:"Super! Za gradnjo hiše boste najverjetneje potrebovali geološko-geomehansko poročilo – to je podlaga za temeljenje objekta in običajna priloga k dokumentaciji za gradbeno dovoljenje. Preverimo, kaj od spodnjega že imate.",
+      ru:"Отлично! Для строительства дома почти наверняка понадобится геолого-геомеханическое заключение — это основа для проектирования фундамента и обычное приложение к документации на разрешение на строительство. Проверим, что из этого у вас уже есть."
+    },
+    docs:[
+      {
+        id:"hisa_skica",
+        label:{sl:"Skica ali idejna zasnova objekta (tip, etažnost, tlorisna površina, klet da/ne)", ru:"Эскиз или эскизный проект дома (тип, этажность, площадь, наличие подвала)"},
+        why:{sl:"Velikost, teža in globina objekta določajo obseg vrtin in preiskav – s tem tudi ceno in trajanje.", ru:"Размер, вес и глубина здания определяют объём бурения и исследований — а значит, цену и сроки."},
+        where:{sl:"Od arhitekta ali projektanta, ali groba skica z osnovnimi merami, če projekta še nimate.", ru:"У архитектора или проектировщика, либо ваш черновой эскиз с основными размерами, если проекта пока нет."}
+      },
+      {
+        id:"hisa_naklon",
+        label:{sl:"Podatek o naklonu terena (raven, rahlo v naklonu, strm)", ru:"Информация об уклоне участка (ровный, с небольшим уклоном, крутой)"},
+        why:{sl:"Naklon vpliva na dostopnost za vrtalno opremo in na tveganje za nestabilnost.", ru:"Уклон влияет на доступность для буровой техники и на риск нестабильности."},
+        where:{sl:"Dovolj je vaša ocena na terenu ali geodetski posnetek, če ga imate.", ru:"Достаточно вашей оценки на месте либо геодезической съёмки, если она есть."}
+      },
+      {
+        id:"hisa_projektant",
+        label:{sl:"Kontakt projektanta ali statika (če je že izbran)", ru:"Контакт проектировщика или инженера-статика (если уже выбран)"},
+        why:{sl:"Uskladimo vsebino poročila z njegovimi zahtevami, da vam ne bo treba naročati dopolnitev.", ru:"Согласуем содержание заключения с его требованиями, чтобы не пришлось заказывать доработку."},
+        where:{sl:"Iz pogodbe s projektantskim birojem; če projektanta še nimate, to ni ovira za naročilo.", ru:"Из договора с проектным бюро; если проектировщика ещё нет — это не помеха для заказа."}
+      }
+    ]
+  },
+  {
+    id:"parcela", icon:"🔎",
+    title:{sl:"Preverjam zemljišče pred nakupom", ru:"Проверяю участок перед покупкой"},
+    subtitle:{sl:"Mnenje o stabilnosti in primernosti terena za gradnjo", ru:"Заключение о стабильности и пригодности участка под застройку"},
+    intro:{
+      sl:"Pametna odločitev – bolje preveriti prej kot po nakupu. Za okvirno mnenje o stabilnosti in primernosti zemljišča za gradnjo potrebujemo naslednje.",
+      ru:"Разумный шаг — лучше проверить до покупки, чем после. Для предварительного заключения о стабильности и пригодности участка под застройку нам нужно следующее."
+    },
+    docs:[
+      {
+        id:"parcela_namembnost",
+        label:{sl:"Podatek o namenski rabi zemljišča (iz OPN ali lokacijske informacije)", ru:"Сведения о целевом назначении участка (из OPN или lokacijske informacije)"},
+        why:{sl:"Pove, ali je gradnja na parceli sploh dovoljena in ali obstajajo omejitve (poplavno ali plazovito območje).", ru:"Показывает, разрешено ли вообще строительство на участке и есть ли ограничения (паводковая, оползневая зона)."},
+        where:{sl:"Lokacijsko informacijo pridobite na občini (nekatere jo objavijo tudi na svoji spletni strani); osnovne podatke lahko preverite tudi na portalu PISO.", ru:"Lokacijsko informacijo можно получить в общине (некоторые публикуют её на сайте); базовые данные также можно проверить на портале PISO."}
+      },
+      {
+        id:"parcela_namen",
+        label:{sl:"Okvirna zamisel, kaj bi na zemljišču radi zgradili", ru:"Примерное представление, что вы хотите построить на участке"},
+        why:{sl:"Od tega je odvisen obseg raziskav, ki jih za mnenje potrebujemo.", ru:"От этого зависит объём исследований, необходимых для заключения."},
+        where:{sl:"Zadostuje beseda ali dve – npr. 'enodružinska hiša', 'vikend', 'garaža'.", ru:"Достаточно пары слов — например, «дом на одну семью», «дача», «гараж»."}
+      }
+    ]
+  },
+  {
+    id:"plaz", icon:"⛰️",
+    title:{sl:"Pobočje se premika, razpoke, plaz", ru:"Склон двигается, трещины, оползень"},
+    subtitle:{sl:"Sanacija plazov, stabilizacija pobočja", ru:"Стабилизация склона, устранение оползня"},
+    intro:{
+      sl:"Razumemo, tovrstne stvari znajo biti stresne. Da lahko čim prej ocenimo stanje, nam pomagajte z naslednjimi podatki.",
+      ru:"Понимаем, такие ситуации выбивают из колеи. Чтобы мы могли как можно скорее оценить обстановку, помогите нам со следующими сведениями."
+    },
+    docs:[
+      {
+        id:"plaz_foto",
+        label:{sl:"Fotografije problematičnega mesta (razpoke, premik zemlje, poškodbe)", ru:"Фотографии проблемного участка (трещины, смещение грунта, повреждения)"},
+        why:{sl:"Fotografije nam že na daljavo povedo veliko o vrsti in obsegu problema.", ru:"Фотографии уже дистанционно дают много информации о типе и масштабе проблемы."},
+        where:{sl:"Posnamete lahko kar s telefonom na kraju samem – po možnosti iz več zornih kotov.", ru:"Можно снять прямо на телефон на месте — желательно с нескольких ракурсов."}
+      },
+      {
+        id:"plaz_opis",
+        label:{sl:"Kratek opis dogajanja (kdaj se je pojavilo, po katerih dogodkih)", ru:"Краткое описание ситуации (когда началось, после каких событий)"},
+        why:{sl:"Čas in okoliščine (npr. po močnem deževju, izkopu v bližini) pomagajo razumeti mehanizem premika.", ru:"Время и обстоятельства (например, после сильных дождей, земляных работ по соседству) помогают понять механизм смещения."},
+        where:{sl:"Vaša lastna opažanja, po možnosti tudi izjave sosedov.", ru:"Ваши собственные наблюдения, желательно также со слов соседей."}
+      },
+      {
+        id:"plaz_staro_porocilo",
+        label:{sl:"Morebitno starejše geološko/geotehnično poročilo za to lokacijo", ru:"Более раннее геологическое/геотехническое заключение по этому месту (если есть)"},
+        why:{sl:"Če obstaja, lahko skrajša obseg ponovnih raziskav in zniža stroške.", ru:"Если оно есть, это может сократить объём повторных исследований и снизить расходы."},
+        where:{sl:"V domačem arhivu, pri občini ali pri prejšnjem izvajalcu del.", ru:"В домашнем архиве, в общине или у прежнего исполнителя работ."}
+      },
+      {
+        id:"plaz_sklep",
+        label:{sl:"Zapisnik ali sklep občine / Direkcije RS za vode (DRSV), če je bila škoda že prijavljena", ru:"Протокол или решение общины / Дирекции по водам (DRSV), если ущерб уже заявлен"},
+        why:{sl:"Potreben je pri postopkih sanacije, ki vključujejo javna sredstva ali uradno prijavo škode.", ru:"Нужен для процедур устранения ущерба, если задействованы государственные средства или официальное заявление об ущербе."},
+        where:{sl:"Na občini ali pri Direkciji RS za vode; če škoda ni bila prijavljena, dokument preprosto še ne obstaja – to ni ovira za naročilo.", ru:"В общине или в Дирекции по водам; если ущерб не заявлялся, этого документа попросту ещё нет — это не помеха для заказа."}
+      }
+    ]
+  },
+  {
+    id:"voda", icon:"💧",
+    title:{sl:"Osuševanje, visoka podtalnica, vrtina", ru:"Осушение участка, высокие грунтовые воды, скважина"},
+    subtitle:{sl:"Hidrogeološko poročilo", ru:"Гидрогеологическое заключение"},
+    intro:{
+      sl:"Za vprašanja podzemne vode – bodisi gre za osuševanje, drenažo ali vrtino za toplotno črpalko – pripravimo hidrogeološko poročilo. Preverimo osnovne podatke.",
+      ru:"Для вопросов, связанных с грунтовыми водами — будь то осушение, дренаж или скважина под тепловой насос — мы готовим гидрогеологическое заключение. Проверим базовые данные."
+    },
+    docs:[
+      {
+        id:"voda_namen",
+        label:{sl:"Natančen namen (vrtina za toplotno črpalko, osuševanje kleti/parcele, zajem vode)", ru:"Точная цель (скважина под тепловой насос, осушение подвала/участка, забор воды)"},
+        why:{sl:"Vsak namen ima svoj obseg raziskav in drugačno zakonsko zahtevo.", ru:"У каждой цели свой объём исследований и свои законодательные требования."},
+        where:{sl:"Zadostuje kratek opis v enem stavku.", ru:"Достаточно короткого описания в одном предложении."}
+      },
+      {
+        id:"voda_globina",
+        label:{sl:"Predvidena globina vrtine, če je znana", ru:"Предполагаемая глубина скважины, если известна"},
+        why:{sl:"Za vrtine, globlje od 30 m, je poleg hidrogeološkega poročila potreben tudi rudarski projekt.", ru:"Для скважин глубже 30 м помимо гидрогеологического заключения понадобится ещё и горный проект."},
+        where:{sl:"To oceno vam običajno poda izvajalec toplotne črpalke ali vrtalec; če je še ne veste, ni ovira.", ru:"Такую оценку обычно даёт исполнитель по тепловым насосам или буровик; если пока не знаете — не беда."}
+      },
+      {
+        id:"voda_sosednje",
+        label:{sl:"Podatek o obstoječih vrtinah ali vodnjakih v bližini", ru:"Сведения о существующих скважинах или колодцах поблизости"},
+        why:{sl:"Pomaga oceniti vodonosnik in preprečiti medsebojne vplive med vrtinami.", ru:"Помогает оценить водоносный горизонт и избежать взаимного влияния скважин."},
+        where:{sl:"Vaše opažanje na terenu ali podatek od sosedov.", ru:"Ваше наблюдение на месте либо информация от соседей."}
+      },
+      {
+        id:"voda_vloga",
+        label:{sl:"Ali ste že oddali vlogo za vodno dovoljenje na ARSO?", ru:"Подавали ли вы уже заявку на vodno dovoljenje в ARSO?"},
+        why:{sl:"Hidrogeološko poročilo je sestavni del vloge – pripravimo ga lahko pred ali vzporedno z oddajo vloge.", ru:"Гидрогеологическое заключение — часть заявки, мы можем подготовить его до или параллельно с подачей заявки."},
+        where:{sl:"Na portalu ARSO, rubrika 'Vodna dovoljenja'; če vloge še niste oddali, to ni ovira – lahko vam pri tem pomagamo.", ru:"На портале ARSO, раздел «Vodna dovoljenja»; если заявку ещё не подавали — не проблема, можем помочь."}
+      }
+    ]
+  },
+  {
+    id:"izkop", icon:"🧱",
+    title:{sl:"Izkop, podporni zid, bazen, garaža v brežini", ru:"Земляные работы, подпорная стена, бассейн, гараж в откосе"},
+    subtitle:{sl:"Projekt zaščite gradbene jame / geomehansko poročilo za izkop", ru:"Проект защиты котлована / геомеханическое заключение на выемку грунта"},
+    intro:{
+      sl:"Pri vsakem izkopu je ključno vedeti, kaj je pod površjem in kako se bo obnašal okoliški teren. Preverimo, kaj že imate pripravljeno.",
+      ru:"При любой выемке грунта важно знать, что находится под поверхностью и как поведёт себя окружающий рельеф. Проверим, что у вас уже готово."
+    },
+    docs:[
+      {
+        id:"izkop_mere",
+        label:{sl:"Mere in globina načrtovanega izkopa ali zidu", ru:"Размеры и глубина планируемой выемки или стены"},
+        why:{sl:"Določa obseg preiskav in vrsto potrebne zaščite gradbene jame.", ru:"Определяет объём исследований и тип необходимой защиты котлована."},
+        where:{sl:"Iz skice ali projekta, če ga imate; sicer zadostuje vaša ocena v metrih.", ru:"Из эскиза или проекта, если есть; иначе достаточно вашей оценки в метрах."}
+      },
+      {
+        id:"izkop_sosedje",
+        label:{sl:"Bližina sosednjih objektov ali parcelnih mej", ru:"Близость соседних построек или границ участка"},
+        why:{sl:"Izkopi v bližini tujih temeljev zahtevajo dodatno oceno vpliva na stabilnost.", ru:"Выемка грунта рядом с чужими фундаментами требует дополнительной оценки влияния на устойчивость."},
+        where:{sl:"Geodetski posnetek, če ga imate, ali preprosto vaša ocena razdalje na kraju samem.", ru:"Геодезическая съёмка, если есть, либо просто ваша оценка расстояния на месте."}
+      },
+      {
+        id:"izkop_soglasje",
+        label:{sl:"Seznanjenost ali soglasje soseda, če je izkop tik ob meji", ru:"Осведомлённость или согласие соседа, если выемка вплотную к границе"},
+        why:{sl:"Priporočljivo, da se izognete morebitnim sporom zaradi vpliva na sosednje zemljišče.", ru:"Рекомендуется, чтобы избежать споров из-за влияния на соседний участок."},
+        where:{sl:"Neformalen pogovor s sosedom; ni pogoj za naročilo poročila, je pa dobra praksa.", ru:"Неформальный разговор с соседом; не является условием заказа заключения, но это хорошая практика."}
+      }
+    ]
+  }
+];
+
+/* ============ STATE ============ */
+let state = {
+  screen: "intro", // intro | service | questions | summary | contact | done
+  lang: "sl",
+  serviceId: null,
+  qIndex: 0,
+  answers: {},
+  expanded: {},
+  contact: {name:"", email:"", phone:"", message:""}
+};
+
+function t(obj){ return obj[state.lang]; }
+function getService(id){ return SERVICES.find(s=>s.id===id); }
+function currentDocs(){
+  const svc = getService(state.serviceId);
+  return svc ? COMMON_DOCS.concat(svc.docs) : [];
+}
+function esc(str){
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+/* ============ ACTIONS ============ */
+function setLang(l){ state.lang = l; render(); }
+
+function startFlow(){ state.screen = "service"; render(); }
+
+function chooseService(id){
+  state.serviceId = id;
+  state.qIndex = 0;
+  state.answers = {};
+  state.expanded = {};
+  state.screen = "questions";
+  render();
+}
+
+function toggleHint(id){
+  state.expanded[id] = !state.expanded[id];
+  render();
+}
+
+function answerQuestion(id, ans){
+  state.answers[id] = ans;
+  if(ans !== "yes"){ state.expanded[id] = true; }
+  const docs = currentDocs();
+  if(state.qIndex < docs.length - 1){
+    state.qIndex += 1;
+  } else {
+    state.screen = "summary";
+  }
+  render();
+}
+
+function goContact(){ state.screen = "contact"; render(); }
+
+function restart(){
+  state = {screen:"intro", lang:state.lang, serviceId:null, qIndex:0, answers:{}, expanded:{}, contact:{name:"",email:"",phone:"",message:""}};
+  render();
+}
+
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function updateContactField(field, value){
+  state.contact[field] = value;
+  const btn = document.getElementById("submitBtn");
+  if(btn){
+    btn.disabled = !(state.contact.name.trim() && isValidEmail(state.contact.email.trim()));
+  }
+}
+
+function buildSummaryLines(){
+  const svc = getService(state.serviceId);
+  const lines = [];
+  lines.push((state.lang==="sl"?"Storitev":"Услуга") + ": " + t(svc.title));
+  lines.push("");
+  currentDocs().forEach(d=>{
+    const ans = state.answers[d.id];
+    const ansText = ans==="yes"?t(TEXT.ansYes):ans==="no"?t(TEXT.ansNo):t(TEXT.ansUnsure);
+    lines.push("- " + t(d.label) + ": " + ansText);
+  });
+  lines.push("");
+  if(state.contact.message){
+    lines.push(t(TEXT.messageLabel) + ": " + state.contact.message);
+    lines.push("");
+  }
+  lines.push(t(TEXT.nameLabel) + ": " + (state.contact.name||"-"));
+  lines.push(t(TEXT.phoneLabel) + ": " + (state.contact.phone||"-"));
+  lines.push("Email: " + (state.contact.email||"-"));
+  return lines;
+}
+
+function submitContact(){
+  const name = document.getElementById("f_name").value.trim();
+  const email = document.getElementById("f_email").value.trim();
+  const phone = document.getElementById("f_phone").value.trim();
+  const message = document.getElementById("f_message").value.trim();
+  if(!name || !isValidEmail(email)){
+    alert(t(TEXT.fillRequired));
+    return;
+  }
+  state.contact = {name, email, phone, message};
+  const svc = getService(state.serviceId);
+  const subject = encodeURIComponent((state.lang==="sl"?"Povpraševanje":"Запрос") + ": " + t(svc.title));
+  const body = encodeURIComponent(buildSummaryLines().join("\n"));
+  state.screen = "done";
+  render();
+  window.location.href = "mailto:dir@geo-inz.si?subject=" + subject + "&body=" + body;
+}
+
+function copySummary(){
+  const text = buildSummaryLines().join("\n");
+  const done = () => {
+    const el = document.getElementById("copyBtnLabel");
+    if(el){ el.textContent = t(TEXT.copied); setTimeout(()=>{ el.textContent = t(TEXT.copySummary); }, 1800); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+function fallbackCopy(text, cb){
+  const ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+  if(cb) cb();
+}
+
+/* ============ RENDER ============ */
+function bubble(who, html, extraClass){
+  return '<div class="msg ' + who + (extraClass?(' '+extraClass):'') + '"><div class="bubble">' + html + '</div></div>';
+}
+
+function questionBubbleHtml(doc){
+  const expanded = !!state.expanded[doc.id];
+  let html = '<div class="q-label">' + esc(t(doc.label)) + '</div>';
+  html += '<button class="hint-toggle" onclick="toggleHint(\'' + doc.id + '\')">' + esc(t(TEXT.hintToggle)) + '</button>';
+  if(expanded){
+    html += '<div class="hint-box"><b>' + esc(t(TEXT.whyLabel)) + ':</b>' + esc(t(doc.why)) + '<br><br><b>' + esc(t(TEXT.whereLabel)) + ':</b>' + esc(t(doc.where)) + '</div>';
+  }
+  return html;
+}
+
+function ansAnswerHtml(ans){
+  if(ans==="yes") return esc(t(TEXT.ansYes));
+  if(ans==="no") return esc(t(TEXT.ansNo));
+  return esc(t(TEXT.ansUnsure));
+}
+function ansClass(ans){
+  if(ans==="yes") return "ans-yes";
+  if(ans==="no") return "ans-no";
+  return "ans-unsure";
+}
+
+function summaryHtml(){
+  const docs = currentDocs();
+  const missing = docs.filter(d=>state.answers[d.id] !== "yes");
+  const allGood = missing.length === 0;
+  let html = '<div style="font-weight:700;font-size:15.5px;margin-bottom:4px;">' + esc(t(allGood?TEXT.successTitle:TEXT.partialTitle)) + '</div>';
+  html += '<div>' + esc(t(allGood?TEXT.successBody:TEXT.partialBody)) + '</div>';
+  html += '<div class="summary-list">';
+  docs.forEach(d=>{
+    const ans = state.answers[d.id];
+    const cls = ans==="yes" ? "ok" : (ans==="no" ? "missing" : "unsure");
+    const icon = ans==="yes" ? "✅" : (ans==="no" ? "❌" : "❔");
+    html += '<div class="summary-item ' + cls + '"><div class="si-title">' + icon + ' ' + esc(t(d.label)) + '</div>';
+    if(ans !== "yes"){
+      html += '<div class="si-note"><b>' + esc(t(TEXT.whereLabel)) + ':</b> ' + esc(t(d.where)) + '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function render(){
+  document.getElementById("tagline").textContent = t(TEXT.tagline);
+  document.getElementById("lang-sl").classList.toggle("active", state.lang==="sl");
+  document.getElementById("lang-ru").classList.toggle("active", state.lang==="ru");
+  document.getElementById("footerContact").innerHTML = t(TEXT.footerContact);
+
+  // progress bar
+  let progress = 0;
+  if(state.screen==="questions"){
+    const docs = currentDocs();
+    progress = Math.round(((state.qIndex)/docs.length)*100);
+  } else if(state.screen==="summary" || state.screen==="contact" || state.screen==="done"){
+    progress = 100;
+  } else if(state.screen==="service"){
+    progress = 0;
+  }
+  document.getElementById("progressFill").style.width = progress + "%";
+
+  // transcript
+  let msgs = "";
+  msgs += bubble("bot", esc(t(TEXT.greeting)));
+
+  if(state.screen !== "intro"){
+    msgs += bubble("user", esc(t(TEXT.startButton)));
+    msgs += bubble("bot", esc(t(TEXT.askService)));
+  }
+
+  if(state.serviceId){
+    const svc = getService(state.serviceId);
+    msgs += bubble("user", svc.icon + " " + esc(t(svc.title)));
+    msgs += bubble("bot", esc(t(svc.intro)));
+    const docs = currentDocs();
+    for(let i=0;i<docs.length;i++){
+      if(i > state.qIndex) break;
+      const doc = docs[i];
+      msgs += bubble("bot", questionBubbleHtml(doc));
+      if(state.answers[doc.id]){
+        msgs += bubble("user", ansAnswerHtml(state.answers[doc.id]), ansClass(state.answers[doc.id]));
+      } else {
+        break;
+      }
+    }
+  }
+
+  if(state.screen==="summary" || state.screen==="contact" || state.screen==="done"){
+    msgs += bubble("bot", summaryHtml());
+  }
+  if(state.screen==="contact" || state.screen==="done"){
+    msgs += bubble("user", esc(t(TEXT.sendInquiry)));
+    msgs += bubble("bot", esc(t(TEXT.contactTitle)));
+  }
+  if(state.screen==="done"){
+    msgs += bubble("bot", '<div style="font-weight:700;margin-bottom:4px;">' + esc(t(TEXT.doneTitle)) + '</div><div>' + esc(t(TEXT.doneBody)) + '</div>');
+  }
+
+  document.getElementById("transcript").innerHTML = msgs;
+
+  // controls
+  let ctrl = "";
+  if(state.screen==="intro"){
+    ctrl = '<button class="btn btn-primary" onclick="startFlow()">' + esc(t(TEXT.startButton)) + ' →</button>';
+  } else if(state.screen==="service"){
+    ctrl = '<div class="service-grid">';
+    SERVICES.forEach(s=>{
+      ctrl += '<button class="service-card" onclick="chooseService(\'' + s.id + '\')">' +
+        '<div class="service-icon">' + s.icon + '</div>' +
+        '<div><div class="service-title">' + esc(t(s.title)) + '</div><div class="service-sub">' + esc(t(s.subtitle)) + '</div></div>' +
+        '</button>';
+    });
+    ctrl += '</div>';
+  } else if(state.screen==="questions"){
+    const docs = currentDocs();
+    const doc = docs[state.qIndex];
+    const stepLabel = t(TEXT.questionStep).replace("{n}", state.qIndex+1).replace("{total}", docs.length);
+    ctrl = '<div class="step-label">' + esc(stepLabel) + '</div>';
+    ctrl += '<div class="answer-row">' +
+      '<button class="btn btn-yes" onclick="answerQuestion(\'' + doc.id + '\',\'yes\')">' + esc(t(TEXT.ansYes)) + '</button>' +
+      '<button class="btn btn-no" onclick="answerQuestion(\'' + doc.id + '\',\'no\')">' + esc(t(TEXT.ansNo)) + '</button>' +
+      '<button class="btn btn-unsure" onclick="answerQuestion(\'' + doc.id + '\',\'unsure\')">' + esc(t(TEXT.ansUnsure)) + '</button>' +
+      '</div>';
+  } else if(state.screen==="summary"){
+    ctrl = '<button class="btn btn-primary" onclick="goContact()">' + esc(t(TEXT.sendInquiry)) + ' →</button>' +
+      '<div style="height:8px;"></div>' +
+      '<button class="btn btn-ghost" style="width:100%;" onclick="restart()">' + esc(t(TEXT.restart)) + '</button>';
+  } else if(state.screen==="contact"){
+    ctrl = '<div class="field"><label>' + esc(t(TEXT.nameLabel)) + '</label><input id="f_name" type="text" value="' + esc(state.contact.name) + '" oninput="updateContactField(\'name\', this.value)"></div>' +
+      '<div class="row-2">' +
+      '<div class="field"><label>' + esc(t(TEXT.emailLabel)) + '</label><input id="f_email" type="email" value="' + esc(state.contact.email) + '" oninput="updateContactField(\'email\', this.value)"></div>' +
+      '<div class="field"><label>' + esc(t(TEXT.phoneLabel)) + '</label><input id="f_phone" type="tel" value="' + esc(state.contact.phone) + '" oninput="updateContactField(\'phone\', this.value)"></div>' +
+      '</div>' +
+      '<div class="field"><label>' + esc(t(TEXT.messageLabel)) + '</label><textarea id="f_message" placeholder="' + esc(t(TEXT.messagePlaceholder)) + '" oninput="updateContactField(\'message\', this.value)">' + esc(state.contact.message) + '</textarea></div>' +
+      '<button class="btn btn-primary" id="submitBtn" onclick="submitContact()" ' + ((state.contact.name.trim() && isValidEmail(state.contact.email.trim()))?'':'disabled') + '>' + esc(t(TEXT.submitButton)) + '</button>' +
+      '<div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:8px;">' + esc(t(TEXT.privacyNote)) + '</div>';
+  } else if(state.screen==="done"){
+    ctrl = '<button class="btn btn-secondary" onclick="copySummary()"><span id="copyBtnLabel">' + esc(t(TEXT.copySummary)) + '</span></button>' +
+      '<div style="height:8px;"></div>' +
+      '<button class="btn btn-ghost" style="width:100%;" onclick="restart()">' + esc(t(TEXT.restart)) + '</button>';
+  }
+  document.getElementById("controls").innerHTML = ctrl;
+
+  const transcriptEl = document.getElementById("transcript");
+  transcriptEl.scrollTop = transcriptEl.scrollHeight;
+}
+
+render();
+</script>
+</body>
+</html>
