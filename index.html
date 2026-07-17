@@ -1,597 +1,303 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geološko-geomehansko poročilo za vašo gradnjo | GeoInženiring</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,500&display=swap" rel="stylesheet">
-<style>
-/* Hallmark · macrostructure: Stat-Led · tone: Technical
-   fingerprint: heading=Hanging, divider=Hairline, button=Outlined-rect,
-   image=Tightly-cropped + full-bleed (hero, 2 bento tiles, quote band), reveal=Number-tick (hero figure only)
-   fonts: display=JetBrains Mono, body=IBM Plex Sans, outlier(wordmark only)=Cabinet Grotesk */
-:root{
-  --bg:#F6F7F3;
-  --ink:#17231B;
-  --dark:#142C1E;
-  --sage:#59AA75;
-  --sage-dark:#4D6956;
-  --muted:#5B6B5F;
-  --line:rgba(20,44,30,.16);
-  --line-strong:rgba(20,44,30,.3);
-  --font-display:"JetBrains Mono", ui-monospace, monospace;
-  --font-body:"IBM Plex Sans", system-ui, sans-serif;
-  --font-wordmark:"Cabinet Grotesk", var(--font-display);
-  --img-terrain:url("https://images.unsplash.com/photo-1667029459136-0f2213cb5aee?auto=format&fit=crop&w=1800&q=70");
-  --img-excavator:url("https://images.unsplash.com/photo-1631479447271-e9c394671f6b?auto=format&fit=crop&w=1000&q=70");
-  --img-pit:url("https://images.unsplash.com/photo-1680463990599-9d318aaecf71?auto=format&fit=crop&w=1000&q=70");
-  --img-rock:url("https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1800&q=70");
-}
-*{box-sizing:border-box;}
-html{background:var(--bg);}
-body{
-  margin:0;
-  font-family:var(--font-body);
-  color:var(--ink);
-  background:var(--bg);
-  line-height:1.6;
-  font-size:16px;
-  font-weight:400;
-}
-a{color:inherit;}
-.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.25rem,4vw,2rem);}
-h1,h2,h3{
-  font-family:var(--font-display);
-  font-weight:700;
-  color:var(--dark);
-  margin:0;
-  line-height:1.08;
-  letter-spacing:-0.01em;
-}
-p{margin:0;}
-.tnum{font-variant-numeric:tabular-nums;}
-
-/* Utility bar */
-.utility{background:var(--dark);color:#cfe0d4;font-size:.78rem;}
-.utility .wrap{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:8px clamp(1.25rem,4vw,2rem);flex-wrap:wrap;gap:6px;
-  font-family:var(--font-display);letter-spacing:.02em;
-}
-.utility span{opacity:.9;}
-
-/* Nav — N9 edge-aligned minimal */
-nav.mainnav{
-  background:var(--bg);border-bottom:1px solid var(--line);
-  position:sticky;top:0;z-index:50;
-}
-.mainnav .wrap{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px clamp(1.25rem,4vw,2rem);
-}
-.wordmark{
-  font-family:var(--font-wordmark);font-weight:700;font-size:1.15rem;
-  color:var(--dark);letter-spacing:-0.01em;text-decoration:none;
-}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
-  background:transparent;color:var(--dark);
-  padding:12px 22px;border:1.5px solid var(--dark);border-radius:4px;
-  text-decoration:none;font-weight:600;font-size:.88rem;cursor:pointer;
-  font-family:var(--font-body);letter-spacing:.01em;
-  transition:background-color .18s ease, color .18s ease;
-}
-.btn:hover{background:var(--dark);color:var(--bg);}
-.btn-accent{border-color:var(--sage-dark);color:var(--sage-dark);}
-.btn-accent:hover{background:var(--sage-dark);color:#fff;}
-
-section{padding:clamp(3rem,7vw,5.5rem) 0;border-top:1px solid var(--line);}
-section:first-of-type{border-top:none;}
-
-/* Hanging heading — floats above section, generous room, left-biased */
-.head{margin-bottom:clamp(2rem,5vw,3.25rem);max-width:640px;}
-.head h2{font-size:clamp(1.5rem,3vw,2rem);text-transform:uppercase;letter-spacing:.02em;}
-.head p{color:var(--muted);margin-top:14px;font-size:1rem;max-width:60ch;}
-
-/* Hero — Stat-Led, full-bleed terrain photo, dark tint overlay, left-biased */
-.hero{
-  padding:clamp(3.5rem,8vw,6rem) 0 clamp(3rem,6vw,4.5rem);
-  position:relative;color:#EFF3EF;border-top:none;
-  background:
-    linear-gradient(180deg, rgba(14,26,18,.88) 0%, rgba(14,26,18,.78) 55%, rgba(14,26,18,.94) 100%),
-    var(--img-terrain) center 35% / cover no-repeat;
-}
-.hero-inner{display:flex;gap:clamp(2rem,5vw,4rem);align-items:flex-end;flex-wrap:wrap;}
-.hero-figure{flex:0 0 auto;}
-.figure{
-  font-family:var(--font-wordmark);font-weight:700;
-  font-size:clamp(4.5rem,13vw,7.5rem);line-height:.92;color:#fff;
-  letter-spacing:-0.02em;
-}
-.hero-copy{flex:1 1 420px;max-width:560px;}
-.qualifier{
-  font-family:var(--font-display);font-weight:700;font-size:clamp(1.4rem,2.6vw,1.9rem);
-  color:#fff;line-height:1.25;margin-bottom:18px;text-transform:none;
-}
-.hero-copy .desc{color:#CBDACF;font-size:1.02rem;line-height:1.6;margin-bottom:28px;max-width:56ch;}
-.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;}
-.hero .btn{border-color:#fff;color:#fff;}
-.hero .btn:hover{background:#fff;color:var(--dark);}
-.hero .btn-accent{border-color:var(--sage);color:var(--sage);}
-.hero .btn-accent:hover{background:var(--sage);color:var(--dark);}
-
-.stat-strip{
-  display:flex;gap:0;margin-top:clamp(2.5rem,5vw,3.5rem);flex-wrap:wrap;
-  border-top:1px solid rgba(255,255,255,.22);
-}
-.stat-strip .s{
-  flex:1 1 180px;padding:18px clamp(1rem,2vw,1.5rem) 0 0;border-right:1px solid rgba(255,255,255,.22);
-}
-.stat-strip .s:last-child{border-right:none;}
-.stat-strip b{
-  display:block;font-family:var(--font-display);font-size:1.3rem;color:#fff;font-weight:700;
-}
-.stat-strip span{font-size:.82rem;color:#B9CABE;}
-
-/* Spec sheet — replaces icon-card grid for "why" section */
-.spec{width:100%;border-collapse:collapse;}
-.spec-row{
-  display:grid;grid-template-columns:220px 1fr 200px;gap:28px;
-  padding:22px 0;border-top:1px solid var(--line);align-items:baseline;
-}
-.spec-row:last-child{border-bottom:1px solid var(--line);}
-.spec-row h3{font-size:1rem;text-transform:none;letter-spacing:0;color:var(--dark);}
-.spec-row p{color:var(--muted);font-size:.95rem;max-width:60ch;}
-.spec-row .src{
-  font-family:var(--font-display);font-size:.76rem;color:var(--sage-dark);
-  text-transform:uppercase;letter-spacing:.06em;text-align:right;
-}
-
-/* Audience — asymmetric two column, hairline vertical divider */
-.audience{display:flex;gap:0;}
-.audience .col{flex:1 1 50%;padding:0 clamp(1.5rem,3vw,2.5rem);}
-.audience .col:first-child{padding-left:0;border-right:1px solid var(--line);}
-.audience .col:last-child{padding-right:0;}
-.audience h3{font-size:1.05rem;text-transform:none;margin-bottom:16px;}
-.audience ul{padding-left:0;margin:0;color:var(--muted);list-style:none;font-size:.94rem;}
-.audience li{padding:10px 0;border-top:1px solid var(--line);}
-.audience li:first-child{border-top:none;}
-
-/* Services — Bento grid, mixed spans, two tiles carry photography */
-.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
-.bento .tile{background:var(--bg);padding:26px;}
-.bento .tile.wide{grid-column:span 2;}
-.bento .tile h3{font-size:.98rem;text-transform:none;margin-bottom:10px;}
-.bento .tile p{color:var(--muted);font-size:.9rem;}
-.bento .tile.photo{
-  position:relative;color:#fff;min-height:220px;background-size:cover;background-position:center;
-  display:flex;flex-direction:column;justify-content:flex-end;
-}
-.bento .tile.photo::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg, rgba(14,26,18,.1) 0%, rgba(14,26,18,.82) 100%);
-}
-.bento .tile.photo h3, .bento .tile.photo p{position:relative;color:#fff;}
-.bento .tile.photo p{color:#D8E4DB;}
-.bento .tile.photo.p-excavator{background-image:var(--img-excavator);}
-.bento .tile.photo.p-pit{background-image:var(--img-pit);}
-
-/* Process — step sequence with connector */
-.steps{position:relative;padding-left:52px;}
-.steps::before{
-  content:"";position:absolute;left:17px;top:6px;bottom:6px;width:1px;background:var(--line-strong);
-}
-.step{position:relative;padding-bottom:36px;}
-.step:last-child{padding-bottom:0;}
-.step .n{
-  position:absolute;left:-52px;top:0;width:34px;height:34px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:.82rem;font-weight:700;color:var(--dark);
-  background:var(--bg);border:1px solid var(--line-strong);border-radius:50%;
-}
-.step h3{font-size:1rem;text-transform:none;margin-bottom:8px;}
-.step p{color:var(--muted);font-size:.94rem;max-width:60ch;}
-
-.price-note{
-  margin-top:32px;padding-top:20px;border-top:1px solid var(--line);
-  color:var(--muted);font-size:.92rem;max-width:60ch;
-}
-.price-note .label{
-  font-family:var(--font-display);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;
-  color:var(--sage-dark);display:block;margin-bottom:8px;
-}
-
-.quote-section{padding-top:0;}
-.quote-photo-band{
-  height:clamp(140px,20vw,220px);margin-bottom:clamp(2.5rem,6vw,4rem);
-  background:var(--img-rock) center 65% / cover no-repeat;
-  filter:saturate(.85);
-}
-
-/* Testimonial — single huge quote, not a grid */
-.quote-main{max-width:66ch;}
-.quote-main blockquote{
-  margin:0;font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.45;color:var(--dark);
-  font-family:var(--font-body);font-weight:500;
-}
-.quote-main .attr{
-  margin-top:20px;font-family:var(--font-display);font-size:.8rem;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--sage-dark);
-}
-.quote-minor{margin-top:44px;border-top:1px solid var(--line);}
-.quote-minor .row{
-  display:flex;gap:24px;padding:16px 0;border-bottom:1px solid var(--line);
-  font-size:.92rem;color:var(--muted);flex-wrap:wrap;
-}
-.quote-minor .row b{color:var(--dark);font-weight:600;}
-
-/* FAQ — conversational, hairline only */
-.faq-row{padding:22px 0;border-top:1px solid var(--line);}
-.faq-row:last-child{border-bottom:1px solid var(--line);}
-.faq-row h3{font-size:1rem;text-transform:none;margin-bottom:8px;}
-.faq-row p{color:var(--muted);font-size:.94rem;max-width:65ch;}
-
-/* Contact */
-.contact-wrap{display:flex;gap:clamp(2rem,5vw,4rem);flex-wrap:wrap;}
-.contact-info{flex:1 1 300px;}
-.contact-info .desc{color:var(--muted);margin-bottom:24px;max-width:50ch;}
-.info-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line);font-size:.92rem;gap:12px;flex-wrap:wrap;}
-.info-row:last-child{border-bottom:1px solid var(--line);}
-.info-row .k{font-family:var(--font-display);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
-.info-row a{text-decoration:none;color:var(--dark);font-weight:600;}
-
-.assistant-promo{
-  margin-bottom:22px;padding:18px 20px;border:1px solid var(--line-strong);border-radius:4px;
-  background:rgba(89,170,117,.06);
-}
-.assistant-promo .k{
-  font-family:var(--font-display);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--sage-dark);display:block;margin-bottom:8px;
-}
-.assistant-promo p{color:var(--muted);font-size:.92rem;margin-bottom:14px;max-width:50ch;}
-
-.contact-form{flex:1 1 380px;}
-.field{margin-bottom:22px;}
-.field label{
-  display:block;font-family:var(--font-display);font-size:.72rem;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--muted);margin-bottom:8px;
-}
-.field input,.field textarea{
-  width:100%;border:none;border-bottom:1.5px solid var(--line-strong);background:transparent;
-  padding:8px 2px;font-family:var(--font-body);font-size:1rem;color:var(--ink);
-  border-radius:0;
-}
-.field input:focus,.field textarea:focus{outline:none;border-bottom-color:var(--sage-dark);}
-.field textarea{min-height:80px;resize:vertical;}
-.consent{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:var(--muted);margin:20px 0 24px;}
-.consent input{width:auto;margin-top:3px;}
-
-footer{border-top:1px solid var(--line);padding:24px 0;}
-footer .wrap{
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
-  font-size:.82rem;color:var(--muted);
-}
-footer .wordmark{font-size:.95rem;}
-footer a{color:var(--muted);text-decoration:none;}
-
-@media (max-width:800px){
-  .spec-row{grid-template-columns:1fr;gap:6px;}
-  .spec-row .src{text-align:left;}
-  .audience{flex-direction:column;}
-  .audience .col:first-child{border-right:none;border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:28px;}
-  .bento{grid-template-columns:repeat(2,1fr);}
-  .bento .tile.wide{grid-column:span 2;}
-}
-@media (max-width:520px){
-  .bento{grid-template-columns:1fr;}
-  .bento .tile.wide{grid-column:span 1;}
-  .utility .wrap{display:none;}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20231f">
+  <meta name="description" content="GeoInženiring — geološka, geomehanska, geotehnična in hidrogeološka poročila za varno gradnjo po vsej Sloveniji.">
+  <title>GeoInženiring — tla, na katerih lahko gradite</title>
+  <link rel="preload" href="assets/hero-fieldwork.webp" as="image" type="image/webp">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Preskoči na vsebino</a>
 
-<div class="utility">
-  <div class="wrap">
-    <span>Dimičeva 14, 1000 Ljubljana</span>
-    <span>dir@geo-inz.si — pon–pet 8:00–16:00</span>
-  </div>
-</div>
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="GeoInženiring — domov">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="brand-copy"><strong>Geo</strong><small>Inženiring</small></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+        <span>Menu</span><i></i><i></i>
+      </button>
+      <nav class="main-nav" id="main-nav" aria-label="Glavna navigacija">
+        <a href="#storitve">Storitve</a>
+        <a href="#porocilo">Vaše poročilo</a>
+        <a href="#obmocja">Območja</a>
+        <a href="#postopek">Postopek</a>
+      </nav>
+      <a class="header-cta" href="#kontakt">Pošljite lokacijo <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
 
-<nav class="mainnav">
-  <div class="wrap">
-    <a class="wordmark" href="#">GeoInženiring</a>
-    <a class="btn btn-accent" href="#narocilo">Naročite poročilo</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="wrap hero-inner">
-    <div class="hero-figure"><div class="figure tnum" id="statFigure">0</div></div>
-    <div class="hero-copy">
-      <p class="qualifier">Od tega leta preiskujemo tla, na katerih gradite.</p>
-      <p class="desc">Geološko, geomehansko, geotehnično in hidrogeološko poročilo za vašo hišo, prizidavo ali projekt — z jasnim rokom in strokovno podlago za gradbeno dovoljenje.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-accent" href="#narocilo">Oddajte povpraševanje</a>
-        <a class="btn" href="#zakaj">Zakaj to potrebujem?</a>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-photo" role="img" aria-label="Geotehnična ekipa med vrtanjem in pregledom vzorca tal"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow eyebrow-light"><span>Od 1946</span> · geologija, ki razume gradnjo</p>
+        <h1 id="hero-title">Tla povedo,<br><em>kako varno graditi.</em></h1>
+        <p class="hero-lead">Terenske raziskave in poročilo, ki ga razumete vi, vaš arhitekt in izvajalec — z jasnim rokom in konkretnimi priporočili.</p>
+        <div class="hero-actions">
+          <a class="button button-ochre" href="#kalkulator">Preverite obseg raziskave</a>
+          <a class="text-link" href="#porocilo">Kako brati poročilo <span aria-hidden="true">↓</span></a>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="wrap">
-    <div class="stat-strip">
-      <div class="s"><b class="tnum">10</b><span>delovnih dni — okvirni rok izdelave</span></div>
-      <div class="s"><b>ISO 9001</b><span>certificiran sistem vodenja kakovosti</span></div>
-      <div class="s"><b>Vsa Slovenija</b><span>območje delovanja</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="zakaj">
-  <div class="wrap">
-    <div class="head">
-      <h2>Zakaj je geološko poročilo potrebno</h2>
-      <p>Šest razlogov, zaradi katerih naročniki v Sloveniji naročijo poročilo pred gradnjo — in kje je to zakonsko podprto.</p>
-    </div>
-    <div class="spec">
-      <div class="spec-row">
-        <h3>Zakonska zahteva</h3>
-        <p>Po Gradbenem zakonu in Zakonu o urejanju prostora je poročilo pri zahtevnejših objektih obvezna priloga h gradbenemu dovoljenju, pogosto predpisano tudi s prostorskim aktom občine.</p>
-        <span class="src">GZ-1 · ZUreP-3</span>
+      <div class="hero-note">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <p><strong>Ekipa na terenu.</strong><br>Delamo po vsej Sloveniji.</p>
       </div>
-      <div class="spec-row">
-        <h3>Prihranek pri gradnji</h3>
-        <p>Poročilo določi pravo globino temeljenja in debelino tampona — brez njega tvegate predimenzionirane temelje in nepredvidene stroške med izkopom.</p>
-        <span class="src">praksa</span>
+      <div class="hero-stats" aria-label="Ključni podatki">
+        <div><strong>10+</strong><span>delovnih dni<br>okvirni rok</span></div>
+        <div><strong>ISO 9001</strong><span>certificiran sistem<br>kakovosti</span></div>
+        <div><strong>3 koraki</strong><span>teren, laboratorij,<br>jasno poročilo</span></div>
       </div>
-      <div class="spec-row">
-        <h3>Varno temeljenje</h3>
-        <p>Podatki o nosilnosti tal in sestavi plasti so vhodni podatek za projektiranje temeljev in konstrukcije objekta.</p>
-        <span class="src">Evrokod 7</span>
+      <a class="scroll-cue" href="#principi" aria-label="Pomaknite se na naslednji razdelek"><span></span></a>
+    </section>
+
+    <section class="principles section" id="principi">
+      <div class="section-shell principle-layout">
+        <div class="section-intro reveal">
+          <p class="eyebrow">Naš način dela</p>
+          <h2>Več kot dokument.<br><span>Odločitev brez ugibanja.</span></h2>
+        </div>
+        <div class="principle-orbit reveal" aria-label="Tri načela našega dela">
+          <div class="orbit-ring" aria-hidden="true"></div>
+          <article class="principle principle-one">
+            <span>01</span><h3>Ekspertiza</h3><p>Podatki, standardi in izkušnje na terenu.</p>
+          </article>
+          <article class="principle principle-two">
+            <span>02</span><h3>Jasnost</h3><p>Zaključki v jeziku, ki vodi do naslednjega koraka.</p>
+          </article>
+          <article class="principle principle-three">
+            <span>03</span><h3>Zaupanje</h3><p>Realni roki, transparenten obseg in dosegljiva ekipa.</p>
+          </article>
+          <div class="orbit-core">Varna<br>gradnja</div>
+        </div>
       </div>
-      <div class="spec-row">
-        <h3>Voda in poplavno tveganje</h3>
-        <p>Poročilo pokaže nivo podtalnice ter možnosti ponikanja in odvodnjavanja — pomembno na vlažnih ali poplavno ogroženih parcelah.</p>
-        <span class="src">hidrogeologija</span>
+    </section>
+
+    <section class="services section" id="storitve">
+      <div class="section-shell">
+        <div class="section-heading reveal">
+          <div><p class="eyebrow">01 · Storitve</p><h2>Od prvega vzorca<br>do pravega temelja.</h2></div>
+          <p>Ne prodajamo paketa na pamet. Najprej razumemo objekt, teren in dokumentacijo, nato določimo smiselni obseg raziskav.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card service-featured reveal">
+            <span class="card-number">01</span>
+            <div class="strata-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="card-copy"><p>Najpogostejša izbira</p><h3>Geološko-geomehansko poročilo</h3><span>Sestava tal · nosilnost · pogoji temeljenja</span></div>
+            <a href="#kontakt" aria-label="Povpraševanje za geološko-geomehansko poročilo">Povpraševanje ↗</a>
+          </article>
+          <article class="service-card service-dark reveal">
+            <span class="card-number">02</span><h3>Geotehnično poročilo</h3><p>Podlaga za temelje, podporne konstrukcije in gradbene jame skladno z Evrokodom 7.</p><span class="chip">Evrokod 7</span>
+          </article>
+          <article class="service-card reveal">
+            <span class="card-number">03</span><h3>Hidrogeologija</h3><p>Podtalnica, ponikanje, odvodnjavanje in vpliv vode na načrtovano gradnjo.</p><span class="service-arrow">↗</span>
+          </article>
+          <article class="service-card service-umber reveal">
+            <span class="card-number">04</span><h3>Plazovitost in sanacije</h3><p>Ocena stabilnosti pobočij in ukrepi za zaščito objekta in zemljišča.</p><span class="service-arrow">↗</span>
+          </article>
+          <article class="service-card reveal">
+            <span class="card-number">05</span><h3>Terenske in laboratorijske preiskave</h3><p>Sondažni izkopi, vrtine, geofizikalne meritve in analiza vzorcev.</p><span class="service-arrow">↗</span>
+          </article>
+        </div>
       </div>
-      <div class="spec-row">
-        <h3>Plazovitost</h3>
-        <p>Na pobočjih in območjih z znano nestabilnostjo poročilo o plazovitosti oceni tveganje in predlaga sanacijske ukrepe.</p>
-        <span class="src">geotehnika</span>
+    </section>
+
+    <section class="report-guide section" id="porocilo">
+      <div class="section-shell report-layout">
+        <div class="report-copy reveal">
+          <p class="eyebrow">02 · Razumljivo poročilo</p>
+          <h2>Vaše poročilo<br><span>ni črna skrinjica.</span></h2>
+          <p>Izberite del prereza in poglejte, kaj podatek pomeni za vašo hišo. Na sestanku vam enako razložimo ugotovitve za vašo parcelo.</p>
+          <div class="guide-tabs" role="tablist" aria-label="Razlaga poročila">
+            <button type="button" role="tab" aria-selected="true" data-guide="layers">Plasti tal</button>
+            <button type="button" role="tab" aria-selected="false" data-guide="water">Podtalnica</button>
+            <button type="button" role="tab" aria-selected="false" data-guide="foundation">Temeljenje</button>
+          </div>
+          <div class="guide-answer" aria-live="polite">
+            <span id="guide-kicker">Kaj vidite</span>
+            <h3 id="guide-title">Vsaka plast nosi drugače.</h3>
+            <p id="guide-text">Poročilo pokaže debelino in lastnosti plasti. Tako projektant ve, kje je dovolj nosilna podlaga in koliko izkopa je smiselno.</p>
+          </div>
+        </div>
+        <div class="soil-card reveal" data-active-layer="layers">
+          <div class="soil-card-top"><span>Interaktivni prerez</span><small>Primer · stanovanjska hiša</small></div>
+          <div class="soil-scene" aria-hidden="true">
+            <div class="house"><i class="roof"></i><i class="wall"></i><i class="door"></i></div>
+            <div class="ground-line"></div>
+            <div class="soil-layer layer-a"><span>A</span><small>humus</small></div>
+            <div class="soil-layer layer-b"><span>B</span><small>melj in glina</small></div>
+            <div class="soil-layer layer-c"><span>C</span><small>prod</small></div>
+            <div class="soil-layer layer-d"><span>D</span><small>kamninska podlaga</small></div>
+            <div class="water-table"><span>nivo podtalnice</span></div>
+            <div class="foundation-mark"><span>priporočena kota temeljenja</span></div>
+          </div>
+          <div class="soil-legend"><span><i class="legend-solid"></i>Nosilna plast</span><span><i class="legend-water"></i>Podtalnica</span><span><i class="legend-foundation"></i>Temelj</span></div>
+        </div>
       </div>
-      <div class="spec-row">
-        <h3>Potresna varnost</h3>
-        <p>Podatki o seizmičnih razmerah na parceli vstopajo v projektiranje konstrukcije objekta.</p>
-        <span class="src">Evrokod 8</span>
+    </section>
+
+    <section class="calculator section" id="kalkulator">
+      <div class="section-shell calculator-shell">
+        <div class="calculator-intro reveal">
+          <p class="eyebrow eyebrow-light">03 · Hitra orientacija</p>
+          <h2>Kaj bo verjetno<br>potrebovala vaša parcela?</h2>
+          <p>V manj kot minuti dobite okvirni obseg raziskave. Končno ponudbo pripravimo po pregledu lokacije in dokumentacije.</p>
+          <div class="calculator-note"><strong>Ni obrazec za prodajo.</strong><span>Rezultat se izračuna takoj; podatkov ne shranjujemo.</span></div>
+          <button class="assistant-inline" type="button" data-assistant-open><span>Pomočnik za povpraševanje</span><b>Preverite dokumente v 2 minutah ↗</b></button>
+        </div>
+        <form class="calc-card reveal" id="scope-calculator">
+          <div class="calc-head"><span>Informativni izračun</span><small>1 / 3</small></div>
+          <label for="building-type">Kaj gradite?</label>
+          <select id="building-type" name="building">
+            <option value="house">Enodružinska hiša</option>
+            <option value="extension">Prizidava ali nadzidava</option>
+            <option value="commercial">Večji ali poslovni objekt</option>
+            <option value="slope">Podporni zid ali sanacija pobočja</option>
+          </select>
+          <div class="range-row"><label for="plot-size">Površina parcele</label><output for="plot-size" id="plot-size-output">650 m²</output></div>
+          <input type="range" id="plot-size" name="size" min="150" max="3000" step="50" value="650">
+          <fieldset>
+            <legend>Kakšen je teren?</legend>
+            <label class="choice"><input type="radio" name="terrain" value="flat" checked><span>Raven</span></label>
+            <label class="choice"><input type="radio" name="terrain" value="slope"><span>Nagnjen</span></label>
+            <label class="choice"><input type="radio" name="terrain" value="wet"><span>Vlažen / neznan</span></label>
+          </fieldset>
+          <div class="calc-result" aria-live="polite">
+            <span>Predlagani začetek</span>
+            <strong id="scope-result">Standardna raziskava</strong>
+            <p id="scope-detail">Ogled dokumentacije, terenski obisk in geološko-geomehansko poročilo.</p>
+            <div><small>Okvirni rok</small><b id="scope-time">10–14 delovnih dni</b></div>
+          </div>
+          <a class="button button-dark" id="calc-cta" href="#kontakt">Pošljite rezultat ekipi</a>
+        </form>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section id="komu">
-  <div class="wrap">
-    <div class="head">
-      <h2>Komu je namenjeno</h2>
-      <p>Delamo tako za zasebne naročnike kot za arhitekturne biroje in s.p. arhitekte.</p>
-    </div>
-    <div class="audience">
-      <div class="col">
-        <h3>Zasebniki, ki gradijo hišo</h3>
-        <ul>
-          <li>Nova gradnja, prizidava ali nadzidava</li>
-          <li>Priprava dokumentacije za gradbeno dovoljenje</li>
-          <li>Ocena tal pred nakupom zemljišča</li>
-          <li>Preveritev podtalnice, kleti, izkopa</li>
-        </ul>
+    <section class="coverage section" id="obmocja">
+      <div class="section-shell">
+        <div class="section-heading reveal">
+          <div><p class="eyebrow">04 · Geografija zaupanja</p><h2>En standard.<br>Različna slovenska tla.</h2></div>
+          <p>Kliknite območje in preverite, katere terenske razmere so tam pogoste. Natančen obseg vedno določimo za konkretno parcelo.</p>
+        </div>
+        <div class="map-module reveal">
+          <div class="map-stage" aria-label="Interaktivna karta območij delovanja">
+            <svg class="slovenia-shape" viewBox="0 0 760 420" role="img" aria-label="Stiliziran zemljevid Slovenije">
+              <path d="M69 218 105 176 171 166 190 124 245 98 304 115 340 86 408 101 447 75 514 95 548 129 624 136 682 183 660 229 708 259 652 292 617 344 554 323 505 357 449 328 398 355 346 326 288 343 237 307 173 313 141 277 91 268Z"/>
+              <path class="map-river" d="M154 188c80 44 132 18 183 60 55 44 102 2 168 40 39 22 83 18 135-11"/>
+              <path class="map-road" d="M183 279c70-27 117-67 187-62 61 4 99-42 173-53"/>
+            </svg>
+            <button class="map-point active" type="button" style="--x:47%;--y:54%" data-place="ljubljana" aria-label="Ljubljana"><i></i><span>Ljubljana</span></button>
+            <button class="map-point" type="button" style="--x:39%;--y:37%" data-place="gorenjska" aria-label="Gorenjska"><i></i><span>Gorenjska</span></button>
+            <button class="map-point" type="button" style="--x:66%;--y:43%" data-place="stajerska" aria-label="Štajerska"><i></i><span>Štajerska</span></button>
+            <button class="map-point" type="button" style="--x:53%;--y:70%" data-place="dolenjska" aria-label="Dolenjska"><i></i><span>Dolenjska</span></button>
+            <button class="map-point" type="button" style="--x:22%;--y:67%" data-place="primorska" aria-label="Primorska"><i></i><span>Primorska</span></button>
+            <div class="map-index"><span>46.1512° N</span><span>14.9955° E</span></div>
+          </div>
+          <aside class="map-card" aria-live="polite">
+            <span id="map-kicker">Osrednja Slovenija</span>
+            <h3 id="map-title">Ljubljana in okolica</h3>
+            <p id="map-text">Prodno-peščene terase, lokalno barjanska tla in visoka podtalnica zahtevajo premišljen izbor raziskav.</p>
+            <div class="terrain-tags" id="map-tags"><span>prod</span><span>podtalnica</span><span>mestna gradnja</span></div>
+            <a href="#kontakt">Preverite svojo lokacijo ↗</a>
+          </aside>
+        </div>
       </div>
-      <div class="col">
-        <h3>Arhitekti in projektni biroji (s.p.)</h3>
-        <ul>
-          <li>Vhodni geomehanski podatki za projektiranje temeljev</li>
-          <li>Poročilo, usklajeno z zahtevami Evrokod 7</li>
-          <li>Dogovorjeni roki za oddajo PGD</li>
-          <li>Sodelovanje pri več projektih hkrati</li>
-        </ul>
+    </section>
+
+    <section class="process section" id="postopek">
+      <div class="section-shell">
+        <div class="section-heading process-heading reveal">
+          <div><p class="eyebrow">05 · Pot od vprašanja do poročila</p><h2>Veste, kaj se dogaja.<br>Na vsakem koraku.</h2></div>
+          <p>Povezujemo teren, laboratorij in projektantsko razmišljanje v en pregleden proces.</p>
+        </div>
+        <ol class="process-list">
+          <li class="reveal"><span>01</span><div><h3>Pošljete lokacijo</h3><p>Parcelna številka, vrsta objekta in dokumentacija, ki jo že imate.</p></div><small>5 min</small></li>
+          <li class="reveal"><span>02</span><div><h3>Določimo obseg</h3><p>Pregledamo teren, zahteve projekta ter pošljemo jasno ponudbo in rok.</p></div><small>1–2 dni</small></li>
+          <li class="reveal"><span>03</span><div><h3>Gremo na teren</h3><p>Izvedemo dogovorjene vrtine, izkope ali meritve ter vzamemo vzorce.</p></div><small>1 dan +</small></li>
+          <li class="reveal"><span>04</span><div><h3>Dobite uporabno poročilo</h3><p>Rezultate prevedemo v priporočila za temeljenje, odvodnjavanje in izvedbo.</p></div><small>10 dni +</small></li>
+        </ol>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section id="storitve">
-  <div class="wrap">
-    <div class="head">
-      <h2>Kaj lahko naročite</h2>
-      <p>Celovit nabor geoloških in geotehničnih storitev — od terenskih raziskav do končnega poročila.</p>
-    </div>
-    <div class="bento">
-      <div class="tile wide"><h3>Geološko poročilo</h3><p>Opis sestave tal, nosilnosti in pogojev temeljenja za izbrano lokacijo.</p></div>
-      <div class="tile"><h3>Geomehansko poročilo</h3><p>Izračuni nosilnosti, posedkov in stabilnosti tal.</p></div>
-      <div class="tile"><h3>Hidrogeološko poročilo</h3><p>Ocena podzemne vode in vpliva podtalnice na gradnjo.</p></div>
-      <div class="tile wide"><h3>Geotehnično poročilo</h3><p>Podlaga za temelje, podporne konstrukcije in gradbene jame, skladno z Evrokod 7.</p></div>
-      <div class="tile"><h3>Poročilo o plazovitosti</h3><p>Ocena nagnjenosti pobočja k plazenju.</p></div>
-      <div class="tile"><h3>Laboratorijske preiskave</h3><p>Analiza vzorcev tal v lastnem laboratoriju.</p></div>
-      <div class="tile wide photo p-pit"><h3>Terenske raziskave</h3><p>Sondažni izkopi, vrtine in geofizikalne meritve na lokaciji.</p></div>
-      <div class="tile photo p-excavator"><h3>Sanacija plazov</h3><p>Projekti stabilizacije in ojačitve tal.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="proces">
-  <div class="wrap">
-    <div class="head">
-      <h2>Kako poteka naročilo</h2>
-      <p>Od prvega stika do poročila, primernega za priložitev k vlogi za gradbeno dovoljenje.</p>
-    </div>
-    <div class="steps">
-      <div class="step"><span class="n tnum">01</span><h3>Povpraševanje</h3><p>Oddate obrazec ali pokličete — povejte lokacijo, vrsto objekta in namen poročila.</p></div>
-      <div class="step"><span class="n tnum">02</span><h3>Individualna ponudba</h3><p>Pripravimo ponudbo glede na zahtevnost terena, obseg del in rok — cena se oblikuje za vsak projekt posebej.</p></div>
-      <div class="step"><span class="n tnum">03</span><h3>Teren in laboratorij</h3><p>Izvedemo terenske raziskave (sondažni izkopi, vrtine) in laboratorijske preiskave vzorcev.</p></div>
-      <div class="step"><span class="n tnum">04</span><h3>Poročilo</h3><p>Pripravimo pisno poročilo, primerno za priložitev k vlogi za gradbeno dovoljenje. Okvirni rok: od 10 delovnih dni.</p></div>
-    </div>
-    <div class="price-note">
-      <span class="label">Cena</span>
-      Vedno individualna — odvisna od lokacije, dostopnosti terena, vrste objekta in obsega potrebnih raziskav. Za oceno cene in roka nas kontaktirajte prek obrazca spodaj ali po telefonu.
-    </div>
-  </div>
-</section>
-
-<section class="quote-section">
-  <div class="quote-photo-band"></div>
-  <div class="wrap">
-    <div class="head">
-      <h2>Kaj pravijo naročniki</h2>
-    </div>
-    <div class="quote-main">
-      <blockquote>»Naročila sem geološko raziskavo mesta za gradnjo hiše in bila zelo zadovoljna. Strokovnjaki so podrobno razložili vse rezultate in podali priporočila glede izbire podlage.«</blockquote>
-      <div class="attr">Astrid Cvikl — zasebna naročnica</div>
-    </div>
-    <div class="quote-minor">
-      <div class="row"><b>Jetmir Rakovec:</b> »Geološke raziskave za naš projekt so bile izvedene strokovno in v najkrajšem možnem času.«</div>
-      <div class="row"><b>Boris Leskovšek:</b> »Ekipa se je izkazala kot pravi strokovnjak — vsa dela opravljena učinkovito in v dogovorjenih rokih.«</div>
-    </div>
-  </div>
-</section>
-
-<section id="faq">
-  <div class="wrap">
-    <div class="head"><h2>Pogosta vprašanja</h2></div>
-    <div class="faq-list">
-      <div class="faq-row"><h3>Kaj je geološko-geomehansko poročilo in kdaj ga potrebujem?</h3><p>Strokovni dokument, ki opisuje sestavo in lastnosti tal ter podaja geomehanske parametre za projektiranje temeljev. Potrebujete ga pri gradnji, prizidavi ali nadzidavi objekta, pogosto tudi kot obvezno prilogo k vlogi za gradbeno dovoljenje.</p></div>
-      <div class="faq-row"><h3>Ali je poročilo vedno zakonsko obvezno?</h3><p>Pri zahtevnejših objektih in kadar je tako predpisano s prostorskim aktom, je poročilo obvezna priloga k projektu za gradbeno dovoljenje. Tudi kadar ni strogo obvezno, ga priporočamo.</p></div>
-      <div class="faq-row"><h3>Koliko časa traja izdelava?</h3><p>Okvirno od 10 delovnih dni, odvisno od obsega raziskav in dostopnosti lokacije. Točen rok potrdimo v ponudbi.</p></div>
-      <div class="faq-row"><h3>Kdaj je potrebno poročilo o plazovitosti?</h3><p>Pri gradnji na nagnjenem terenu ali območjih z znano nestabilnostjo. Na njegovi podlagi po potrebi izdelamo tudi projekt sanacije.</p></div>
-      <div class="faq-row"><h3>Ali delate tudi z arhitekti in projektnimi biroji?</h3><p>Da — redno sodelujemo z arhitekti in s.p. projektanti ter poročilo prilagodimo terminskemu planu oddaje projektne dokumentacije.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="narocilo">
-  <div class="wrap contact-wrap">
-    <div class="contact-info">
-      <div class="head"><h2>Kontakt in naročilo</h2></div>
-      <p class="desc">Izpolnite obrazec ali nas kontaktirajte neposredno — odgovorimo v najkrajšem možnem času.</p>
-      <div class="assistant-promo">
-        <span class="k">Niste prepričani, kaj potrebujete?</span>
-        <p>Pomočnik v 2 minutah preveri, katere podatke in dokumente že imate za vašo storitev — glede na odgovore pripravi povzetek, ki ga lahko pošljete kar iz pogovora.</p>
-        <button class="btn btn-accent" type="button" onclick="toggleAssistant(true)">Odpri pomočnika →</button>
+    <section class="proof section">
+      <div class="section-shell proof-grid">
+        <div class="proof-number reveal"><strong>84<sup>%</sup></strong><p>ljudi bolj zaupa izkušnjam drugih naročnikov kot oglasnim trditvam.</p><small>Konceptualno izhodišče predstavitve</small></div>
+        <blockquote class="featured-quote reveal">
+          <p>“Strokovnjaki so podrobno razložili rezultate in podali priporočila glede izbire podlage.”</p>
+          <footer><span>AC</span><div><strong>Astrid Cvikl</strong><small>zasebna naročnica</small></div></footer>
+        </blockquote>
+        <div class="mini-quotes reveal">
+          <blockquote>“Izvedeno strokovno in v najkrajšem možnem času.”<cite>Jetmir Rakovec</cite></blockquote>
+          <blockquote>“Vsa dela opravljena učinkovito in v dogovorjenih rokih.”<cite>Boris Leskovšek</cite></blockquote>
+        </div>
       </div>
-      <div class="info-row"><span class="k">Telefon</span><a href="tel:+38612345600">+386 1 23 45 600</a></div>
-      <div class="info-row"><span class="k">Telefon 2</span><a href="tel:+38631618410">+386 3 16 18 410</a></div>
-      <div class="info-row"><span class="k">E-pošta</span><a href="mailto:dir@geo-inz.si">dir@geo-inz.si</a></div>
-      <div class="info-row"><span class="k">Naslov</span><span>Dimičeva 14, 1000 Ljubljana</span></div>
-      <div class="info-row"><span class="k">Delovni čas</span><span>pon–pet, 8:00–16:00</span></div>
-    </div>
-    <form class="contact-form" onsubmit="return false;">
-      <div class="field"><label for="name">Ime in priimek</label><input id="name" type="text" required></div>
-      <div class="field"><label for="phone">Telefon</label><input id="phone" type="tel" required></div>
-      <div class="field"><label for="email">E-pošta</label><input id="email" type="email" required></div>
-      <div class="field"><label for="message">Opis projekta (lokacija, vrsta objekta)</label><textarea id="message" placeholder="Npr. novogradnja hiše, parcela v Kranju, potrebujem poročilo za PGD"></textarea></div>
-      <div class="consent">
-        <input type="checkbox" id="consent" required>
-        <label for="consent">Strinjam se z obdelavo osebnih podatkov skladno s politiko zasebnosti.</label>
+    </section>
+
+    <section class="faq section">
+      <div class="section-shell faq-layout">
+        <div class="faq-intro reveal"><p class="eyebrow">06 · Brez nejasnosti</p><h2>Vprašanja pred<br>prvim korakom.</h2><p>Če odgovora ne najdete, nas pokličite. Kratek pogovor je pogosto najhitrejša pot do jasnosti.</p></div>
+        <div class="faq-list reveal">
+          <details open><summary>Kdaj potrebujem geološko-geomehansko poročilo?<span>+</span></summary><p>Pri novogradnji, prizidavi ali nadzidavi, pogosto kot podlago za projektiranje in dokumentacijo za gradbeno dovoljenje. Smiselno je tudi pred nakupom zahtevnega zemljišča.</p></details>
+          <details><summary>Koliko časa traja izdelava?<span>+</span></summary><p>Običajno od 10 delovnih dni po izvedeni terenski raziskavi. Točen rok je odvisen od obsega, dostopnosti lokacije in potrebnih laboratorijskih preiskav.</p></details>
+          <details><summary>Ali je poročilo vedno zakonsko obvezno?<span>+</span></summary><p>Obveznost je odvisna od vrste objekta, prostorskega akta in projektnih zahtev. Tudi kadar ni izrecno zahtevano, lahko raziskava prepreči drage spremembe med gradnjo.</p></details>
+          <details><summary>Ali sodelujete neposredno z arhitektom?<span>+</span></summary><p>Da. Uskladimo potrebne parametre, rok oddaje in obliko podatkov, da poročilo neposredno podpira projektiranje.</p></details>
+        </div>
       </div>
-      <button class="btn btn-accent" type="submit">Pošlji povpraševanje</button>
-    </form>
+    </section>
+
+    <section class="contact section" id="kontakt">
+      <div class="contact-photo" aria-hidden="true"></div>
+      <div class="section-shell contact-grid">
+        <div class="contact-copy reveal">
+          <p class="eyebrow eyebrow-light">Začnimo pri lokaciji</p>
+          <h2>Pošljite parcelo.<br><span>Mi postavimo prava vprašanja.</span></h2>
+          <p>Za prvi odgovor zadoščajo lokacija, vrsta objekta in vaš kontakt. Odgovorimo v najkrajšem možnem času.</p>
+          <div class="direct-contact">
+            <a href="tel:+38612345600"><small>Pokličite</small><strong>+386 1 23 45 600</strong></a>
+            <a href="mailto:dir@geo-inz.si"><small>Pišite</small><strong>dir@geo-inz.si</strong></a>
+          </div>
+        </div>
+        <form class="contact-form reveal" id="contact-form">
+          <div class="field-row"><label>Ime in priimek<input type="text" name="name" autocomplete="name" required></label><label>Telefon<input type="tel" name="phone" autocomplete="tel" required></label></div>
+          <label>E-pošta<input type="email" name="email" autocomplete="email" required></label>
+          <label>Lokacija in vrsta objekta<textarea name="project" rows="4" placeholder="Npr. novogradnja hiše, parcela v Kranju ..." required></textarea></label>
+          <label class="consent"><input type="checkbox" name="consent" required><span>Strinjam se z obdelavo podatkov za pripravo odgovora.</span></label>
+          <button class="button button-ochre" type="submit">Pripravite prvi odgovor <span>↗</span></button>
+          <p class="form-status" id="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="brand brand-light" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-copy"><strong>Geo</strong><small>Inženiring</small></span></a>
+      <p>Dimičeva 14, 1000 Ljubljana<br>pon–pet · 8:00–16:00</p>
+      <div class="footer-links"><a href="#storitve">Storitve</a><a href="#porocilo">Poročilo</a><a href="#kontakt">Kontakt</a></div>
+      <small>© 2026 GeoInženiring · Od 1946</small>
+    </div>
+  </footer>
+
+  <div class="mobile-actions" aria-label="Hitra kontaktna dejanja">
+    <a href="tel:+38612345600"><span aria-hidden="true">☎</span> Pokličite</a>
+    <a href="https://wa.me/38631618410" target="_blank" rel="noopener"><span aria-hidden="true">WA</span> WhatsApp</a>
   </div>
-</section>
 
-<footer>
-  <div class="wrap">
-    <span class="wordmark" style="font-family:var(--font-wordmark);color:var(--dark);font-weight:700;">GeoInženiring</span>
-    <span>Dimičeva 14, 1000 Ljubljana · <a href="mailto:dir@geo-inz.si">dir@geo-inz.si</a> · <a href="tel:+38612345600">+386 1 23 45 600</a></span>
-    <span>© 2026 — od 1946</span>
-  </div>
-</footer>
+  <button class="assistant-fab" type="button" data-assistant-open><i></i><span>Pomočnik</span></button>
+  <div class="assistant-overlay" data-assistant-close></div>
+  <aside class="assistant-drawer" aria-label="Pomočnik za pripravo povpraševanja" aria-hidden="true">
+    <div class="assistant-drawer-head"><div><span>Digitalni pomočnik</span><strong>Pripravite povpraševanje</strong></div><button type="button" data-assistant-close aria-label="Zapri pomočnika">×</button></div>
+    <iframe title="GeoInženiring — pomočnik za povpraševanje" loading="lazy"></iframe>
+  </aside>
 
-<!-- Interactive assistant — isolated in an iframe so its own design system never leaks into the page -->
-<button id="assistantFab" class="assistant-fab" type="button" onclick="toggleAssistant()">
-  <span class="dot"></span> Pomočnik
-</button>
-
-<div id="assistantOverlay" class="assistant-overlay" onclick="toggleAssistant(false)"></div>
-<aside id="assistantDrawer" class="assistant-drawer" aria-label="Pomočnik za povpraševanje">
-  <div class="assistant-drawer-head">
-    <span>Pomočnik za povpraševanje</span>
-    <button type="button" onclick="toggleAssistant(false)" aria-label="Zapri">×</button>
-  </div>
-  <iframe id="assistantFrame" src="" loading="lazy" title="GeoInženiring – pomočnik za povpraševanje"></iframe>
-</aside>
-
-<style>
-.assistant-fab{
-  position:fixed;right:clamp(16px,3vw,28px);bottom:clamp(16px,3vw,28px);z-index:80;
-  display:inline-flex;align-items:center;gap:9px;
-  background:var(--dark);color:#fff;border:none;border-radius:4px;
-  padding:14px 20px;font-family:var(--font-display);font-size:.82rem;font-weight:700;
-  letter-spacing:.02em;cursor:pointer;box-shadow:0 8px 24px rgba(20,44,30,.28);
-  transition:background-color .18s ease;
-}
-.assistant-fab:hover{background:var(--sage-dark);}
-.assistant-fab .dot{width:7px;height:7px;border-radius:50%;background:var(--sage);flex-shrink:0;}
-.assistant-overlay{
-  position:fixed;inset:0;background:rgba(14,26,18,.45);z-index:89;
-  opacity:0;pointer-events:none;transition:opacity .2s ease;
-}
-.assistant-overlay.open{opacity:1;pointer-events:auto;}
-.assistant-drawer{
-  position:fixed;top:0;right:0;height:100%;width:min(440px,100vw);
-  background:#fff;z-index:90;box-shadow:-12px 0 32px rgba(20,44,30,.18);
-  display:flex;flex-direction:column;
-  transform:translateX(100%);transition:transform .28s ease;
-}
-.assistant-drawer.open{transform:translateX(0);}
-.assistant-drawer-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 20px;border-bottom:1px solid var(--line);
-  font-family:var(--font-display);font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;
-  color:var(--dark);flex-shrink:0;
-}
-.assistant-drawer-head button{
-  background:none;border:none;font-size:1.4rem;line-height:1;color:var(--muted);cursor:pointer;padding:0 4px;
-}
-.assistant-drawer iframe{flex:1;width:100%;border:none;}
-@media (max-width:520px){
-  .assistant-drawer{width:100vw;}
-  .assistant-fab span:not(.dot){display:none;}
-  .assistant-fab{padding:14px;border-radius:50%;}
-}
-</style>
-
-<script>
-(function(){
-  var loaded = false;
-  window.toggleAssistant = function(force){
-    var drawer = document.getElementById('assistantDrawer');
-    var overlay = document.getElementById('assistantOverlay');
-    var open = typeof force === 'boolean' ? force : !drawer.classList.contains('open');
-    if(open && !loaded){
-      document.getElementById('assistantFrame').src = 'geo-inz-cek-lista.html';
-      loaded = true;
-    }
-    drawer.classList.toggle('open', open);
-    overlay.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-  };
-})();
-</script>
-
-<script>
-(function(){
-  var el = document.getElementById('statFigure');
-  var target = 1946;
-  var start = null;
-  var duration = 700;
-  function ease(t){ return 1 - Math.pow(1 - t, 3); }
-  function step(ts){
-    if(!start) start = ts;
-    var p = Math.min((ts - start) / duration, 1);
-    el.textContent = Math.round(ease(p) * target);
-    if(p < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-})();
-</script>
-
+  <script src="app.js" defer></script>
 </body>
 </html>
