@@ -21,8 +21,7 @@ contactForm?.addEventListener('submit', (event) => {
   const subject = encodeURIComponent(`Povpraševanje za parcelo — ${data.get('name')}`);
   const body = encodeURIComponent([
     `Ime: ${data.get('name')}`,
-    `Telefon: ${data.get('phone')}`,
-    `E-pošta: ${data.get('email')}`,
+    `Kontakt: ${data.get('contact')}`,
     '',
     `Lokacija in objekt: ${data.get('project')}`
   ].join('\n'));
