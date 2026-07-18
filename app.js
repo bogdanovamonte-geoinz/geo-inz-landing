@@ -29,6 +29,36 @@ contactForm?.addEventListener('submit', (event) => {
   window.location.href = `mailto:dir@geo-inz.si?subject=${subject}&body=${body}`;
 });
 
+const assistantDrawer = document.querySelector('.assistant-drawer');
+const assistantOverlay = document.querySelector('.assistant-overlay');
+const assistantFrame = assistantDrawer?.querySelector('iframe');
+const assistantClose = assistantDrawer?.querySelector('[data-assistant-close]');
+let assistantTrigger = null;
+
+function setAssistant(open, trigger = null) {
+  if (!assistantDrawer || !assistantOverlay || !assistantFrame) return;
+  if (open && !assistantFrame.getAttribute('src')) assistantFrame.setAttribute('src', 'geo-inz-cek-lista.html');
+  if (open) assistantTrigger = trigger || document.activeElement;
+  assistantDrawer.classList.toggle('open', open);
+  assistantOverlay.classList.toggle('open', open);
+  document.body.classList.toggle('assistant-open', open);
+  assistantDrawer.setAttribute('aria-hidden', String(!open));
+  assistantOverlay.setAttribute('aria-hidden', String(!open));
+  document.querySelectorAll('[data-assistant-open]').forEach((button) => button.setAttribute('aria-expanded', String(open)));
+  if (open) assistantClose?.focus();
+  else if (assistantTrigger instanceof HTMLElement) assistantTrigger.focus();
+}
+
+document.querySelectorAll('[data-assistant-open]').forEach((button) => {
+  button.addEventListener('click', () => setAssistant(true, button));
+});
+document.querySelectorAll('[data-assistant-close]').forEach((button) => {
+  button.addEventListener('click', () => setAssistant(false));
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && assistantDrawer?.classList.contains('open')) setAssistant(false);
+});
+
 const reveals = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const observer = new IntersectionObserver((entries) => {

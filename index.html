@@ -97,6 +97,19 @@
           <li class="reveal"><span>3</span><div><small>teren</small><h3>Izvedemo raziskavo</h3><p>Dogovorimo termin, pridemo z lastno opremo in vzamemo potrebne vzorce.</p></div></li>
           <li class="reveal"><span>4</span><div><small>razlaga</small><h3>Vse prevedemo v odločitve</h3><p>Dobite poročilo in jasna priporočila. Po potrebi jih uskladimo neposredno z arhitektom.</p></div></li>
         </ol>
+        <div class="assistant-callout reveal">
+          <div class="assistant-callout-copy">
+            <p class="assistant-kicker"><span></span> Digitalni pomočnik</p>
+            <h3>Ne veste, katere dokumente že imate — in kje dobiti manjkajoče?</h3>
+            <p>Odgovorite na nekaj preprostih vprašanj. Za vsak podatek vam pomočnik razloži, zakaj ga potrebujemo, kje ga najdete in kaj storiti, če ga še nimate.</p>
+            <button class="button assistant-start" type="button" data-assistant-open>Preverim dokumente v 2 minutah <span aria-hidden="true">↗</span></button>
+          </div>
+          <ol class="assistant-preview" aria-label="Kaj naredi digitalni pomočnik">
+            <li><span>01</span><div><strong>Poveste, kaj načrtujete</strong><small>hiša, nakup parcele, plaz ali podtalnica</small></div></li>
+            <li><span>02</span><div><strong>Preverite, kaj že imate</strong><small>brez strokovnih izrazov in ugibanja</small></div></li>
+            <li><span>03</span><div><strong>Dobite osebni seznam</strong><small>z navodili, kje pridobiti vsak dokument</small></div></li>
+          </ol>
+        </div>
         <figure class="process-visual reveal">
           <div class="process-photo">
             <img src="assets/residential-drilling.jpg" alt="Geotehnična ekipa izvaja vrtanje in pregleduje vzorce tal na parceli za hišo" loading="lazy">
@@ -223,6 +236,17 @@
   </footer>
 
   <div class="mobile-actions" aria-label="Hitra kontaktna dejanja"><a href="tel:+38612345600">Pokličite</a><a href="#kontakt">Pošljite lokacijo</a></div>
+  <button class="assistant-fab" type="button" data-assistant-open aria-haspopup="dialog" aria-controls="assistant-drawer" aria-expanded="false">
+    <i aria-hidden="true"></i><span><small>Ne veste, kaj potrebujete?</small>Pomočnik</span>
+  </button>
+  <div class="assistant-overlay" data-assistant-close aria-hidden="true"></div>
+  <aside class="assistant-drawer" id="assistant-drawer" role="dialog" aria-modal="true" aria-labelledby="assistant-title" aria-hidden="true">
+    <div class="assistant-drawer-head">
+      <div><span>Digitalni pomočnik</span><strong id="assistant-title">Pripravite povpraševanje korak za korakom</strong></div>
+      <button type="button" data-assistant-close aria-label="Zaprite pomočnika">×</button>
+    </div>
+    <iframe title="GeoInženiring — pomočnik za pripravo povpraševanja" loading="lazy"></iframe>
+  </aside>
   <script src="app.js" defer></script>
 </body>
 </html>
